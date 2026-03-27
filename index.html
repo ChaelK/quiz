@@ -118,6 +118,433 @@
     aspect-ratio: 3/2;
     position: relative;
     transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+    cursor: pointer;
+    border-radius: 24px;
+  }
+  .card.flipped {
+    transform: rotateY(180deg);
+  }
+
+  .card-face {
+    position: absolute;
+    inset: 0;
+    border-radius: 24px;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  /* FRONT */
+  .card-front {
+    background: var(--card-front);
+    border: 3px solid var(--dark);
+  }
+  .card-front::after {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border: 2px dashed rgba(255,255,255,0.4);
+    border-radius: 18px;
+    pointer-events: none;
+  }
+  .card-front .q-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: rgba(255,255,255,0.8);
+    background: rgba(255,255,255,0.2);
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+    font-family: 'Kosugi Maru', sans-serif;
+  }
+  .card-front .question {
+    font-size: 1.18rem;
+    font-weight: 900;
+    color: #fff;
+    text-align: center;
+    line-height: 1.55;
+  }
+  .card-front .hint {
+    margin-top: 14px;
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.85);
+    text-align: center;
+    font-family: 'Kosugi Maru', sans-serif;
+    background: rgba(255,255,255,0.15);
+    padding: 6px 14px;
+    border-radius: 12px;
+  }
+  .card-front .tap-cue {
+    position: absolute;
+    bottom: 18px;
+    right: 22px;
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.7);
+    font-family: 'Kosugi Maru', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .tap-cue::before { content: '👆'; font-size: 0.85rem; }
+
+  /* BACK */
+  .card-back {
+    background: var(--card-back);
+    border: 3px solid var(--dark);
+    transform: rotateY(180deg);
+  }
+  .card-back .answer-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: var(--card-front);
+    font-family: 'Kosugi Maru', sans-serif;
+    margin-bottom: 10px;
+  }
+  .card-back .answer {
+    font-size: 1.9rem;
+    font-weight: 900;
+    color: var(--dark);
+    text-align: center;
+  }
+  .card-back .answer-emoji {
+    font-size: 2.4rem;
+    margin-bottom: 6px;
+  }
+  .card-back .comment {
+    margin-top: 12px;
+    font-size: 0.8rem;
+    color: #7A5C40;
+    text-align: center;
+    line-height: 1.6;
+    font-family: 'Kosugi Maru', sans-serif;
+    max-width: 90%;
+  }
+
+  /* nav buttons */
+  .nav {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    justify-content: center;
+  }
+  .btn {
+    flex: 1;
+    padding: 14px 0;
+    border-radius: 16px;
+    border: 2.5px solid var(--dark);
+    font-family: 'Zen Maru Gothic', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 3px 3px 0 var(--dark);
+  }
+  .btn:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 var(--dark); }
+  .btn-next {
+    background: var(--accent);
+    color: var(--dark);
+  }
+  .btn-next:disabled {
+    background: #E0C8B8;
+    color: #B09080;
+    cursor: default;
+    box-shadow: none;
+  }
+  .btn-reset {
+    background: var(--soft);
+    color: var(--dark);
+    max-width: 56px;
+    flex: none;
+    font-size: 1.1rem;
+  }
+
+  /* state message */
+  .state-msg {
+    font-size: 0.82rem;
+    color: #8B6A50;
+    font-family: 'Kosugi Maru', sans-serif;
+    min-height: 20px;
+    transition: opacity 0.3s;
+  }
+
+  /* COMPLETE screen */
+  .complete {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    text-align: center;
+    padding: 32px 24px;
+    background: #fff;
+    border: 3px solid var(--dark);
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+    width: 100%;
+  }
+  .complete.show { display: flex; }
+  .complete .big-emoji { font-size: 3.5rem; }
+  .complete h2 {
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--dark);
+  }
+  .complete p {
+    font-size: 0.85rem;
+    color: #8B6A50;
+    line-height: 1.7;
+    font-family: 'Kosugi Maru', sans-serif;
+  }
+  .complete .btn-next {
+    max-width: 200px;
+    width: 100%;
+  }
+
+  /* quiz area toggle */
+  #quiz-area { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+  #quiz-area.hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>わたしの<span>前職</span>は<br>な〜んだ？</h1>
+    <p>タップしてめくってみてね 🃏</p>
+  </div>
+
+  <div class="progress" id="progress"></div>
+  <div class="q-counter" id="q-counter"></div>
+
+  <div id="quiz-area">
+    <div class="card-wrap">
+      <div class="card" id="card" onclick="flipCard()">
+        <div class="card-face card-front">
+          <div class="q-label">Q U E S T I O N</div>
+          <div class="question" id="question-text"></div>
+          <div class="hint" id="hint-text"></div>
+          <div class="tap-cue">タップで答え合わせ</div>
+        </div>
+        <div class="card-face card-back">
+          <div class="answer-emoji" id="answer-emoji"></div>
+          <div class="answer-label">A N S W E R</div>
+          <div class="answer" id="answer-text"></div>
+          <div class="comment" id="comment-text"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="state-msg" id="state-msg">まずカードをタップ！</div>
+
+    <div class="nav">
+      <button class="btn btn-reset" onclick="resetCurrent()" title="もう一度">↩️</button>
+      <button class="btn btn-next" id="btn-next" onclick="nextCard()" disabled>つぎへ →</button>
+    </div>
+  </div>
+
+  <div class="complete" id="complete">
+    <div class="big-emoji">🎉</div>
+    <h2>全問クリア！</h2>
+    <p>わたしの前職、ぜんぶわかった？<br>こんなにいろんな仕事をしてきたけど、<br>これからはここで一緒に頑張ります！<br>よろしくね 😊</p>
+    <button class="btn btn-next" onclick="restart()">もう一度あそぶ 🔄</button>
+  </div>
+</div>
+
+<script>
+  const quizzes = [
+    {
+      question: "わたしが働いていた場所は\nどこでしょう？",
+      hint: "ヒント：家電や照明、電池も売ってたよ⚡",
+      emoji: "🔌",
+      answer: "電気屋さん",
+      comment: "家電からスマホまで、いろいろ詳しくなれたよ！"
+    },
+    {
+      question: "イベントを企画して\nPRする仕事、やってたよ！\nどんな仕事？",
+      hint: "ヒント：チラシ作ったり、SNS投稿したりもしてたよ📣",
+      emoji: "🎪",
+      answer: "イベント企画・広報",
+      comment: "人を集めて盛り上げるのが好きだったな〜！"
+    },
+    {
+      question: "福祉の施設で\n利用者さんの生活を\nサポートする仕事は？",
+      hint: "ヒント：ケアマネさんとも連携してたよ🤝",
+      emoji: "🏠",
+      answer: "介護施設の生活相談員",
+      comment: "この仕事が、今の自分の原点のひとつかも！"
+    },
+    {
+      question: "ゲームの\nバグや不具合を\n見つける仕事は？",
+      hint: "ヒント：ひたすらゲームをプレイするお仕事🎮",
+      emoji: "🎮",
+      answer: "ゲームデバッグ",
+      comment: "好きなことを仕事にしてみた経験だよ！"
+    },
+    {
+      question: "川や池の水が\n安全かどうかを\n調べる仕事は？",
+      hint: "ヒント：試験管とか使って水を分析するよ🧪",
+      emoji: "💧",
+      answer: "水質管理",
+      comment: "理系っぽい仕事もやってたんだよね〜！"
+    },
+    {
+      question: "入試のとき\n教室の前に立って\n見守る仕事は？",
+      hint: "ヒント：「始め！」って言う人だよ📝",
+      emoji: "📋",
+      answer: "センター試験の試験監督",
+      comment: "緊張感がある仕事だったな。受験生のこと応援してたよ！"
+    },
+    {
+      question: "絵やレイアウトを\nつくるクリエイティブな\n仕事は？",
+      hint: "ヒント：ロゴとかチラシとかもつくるよ🎨",
+      emoji: "✏️",
+      answer: "デザイナー",
+      comment: "ものをカタチにするのが好きだったな！"
+    },
+    {
+      question: "遊んで楽しめる\nゲームを一からつくる\n仕事は？",
+      hint: "ヒント：カードやコマを使って遊ぶゲームだよ🎲",
+      emoji: "🎲",
+      answer: "ボードゲーム制作",
+      comment: "みんなが笑顔になるゲームを作るのが夢だったよ！"
+    }
+  ];
+
+  let current = 0;
+  let flipped = false;
+  const shuffled = [...quizzes].sort(() => Math.random() - 0.5);
+
+  function buildProgress() {
+    const p = document.getElementById('progress');
+    p.innerHTML = '';
+    shuffled.forEach((_, i) => {
+      const d = document.createElement('div');
+      d.className = 'dot' + (i === 0 ? ' active' : '');
+      d.id = 'dot-' + i;
+      p.appendChild(d);
+    });
+  }
+
+  function loadCard(animate) {
+    const card = document.getElementById('card');
+    const apply = () => {
+      const q = shuffled[current];
+      document.getElementById('question-text').innerText = q.question;
+      document.getElementById('hint-text').innerText = q.hint;
+      document.getElementById('answer-emoji').innerText = q.emoji;
+      document.getElementById('answer-text').innerText = q.answer;
+      document.getElementById('comment-text').innerText = q.comment;
+      document.getElementById('q-counter').innerText = `${current + 1} / ${shuffled.length}`;
+      card.classList.remove('flipped');
+      document.getElementById('btn-next').disabled = true;
+      document.getElementById('state-msg').innerText = 'まずカードをタップ！';
+      flipped = false;
+      updateDots();
+    };
+    if (animate) {
+      card.style.opacity = '0';
+      card.style.pointerEvents = 'none';
+      setTimeout(() => {
+        apply();
+        card.style.opacity = '1';
+        card.style.pointerEvents = '';
+      }, 300);
+    } else {
+      apply();
+    }
+  }
+
+  function updateDots() {
+    shuffled.forEach((_, i) => {
+      const d = document.getElementById('dot-' + i);
+      d.className = 'dot';
+      if (i < current) d.classList.add('done');
+      else if (i === current) d.classList.add('active');
+    });
+  }
+
+  function flipCard() {
+    if (flipped) return;
+    document.getElementById('card').classList.add('flipped');
+    document.getElementById('btn-next').disabled = false;
+    document.getElementById('state-msg').innerText = current < shuffled.length - 1 ? '「つぎへ」で次の問題へ！' : '「つぎへ」で結果を見よう！';
+    flipped = true;
+  }
+
+  function resetCurrent() {
+    document.getElementById('card').classList.remove('flipped');
+    document.getElementById('btn-next').disabled = true;
+    document.getElementById('state-msg').innerText = 'まずカードをタップ！';
+    flipped = false;
+  }
+
+  function nextCard() {
+    const card = document.getElementById('card');
+    // まず表面に戻してからフェードアウト
+    card.classList.remove('flipped');
+    flipped = false;
+    setTimeout(() => {
+      current++;
+      if (current >= shuffled.length) {
+        card.style.opacity = '1';
+        document.getElementById('quiz-area').classList.add('hidden');
+        document.getElementById('progress').style.display = 'none';
+        document.getElementById('q-counter').style.display = 'none';
+        document.getElementById('complete').classList.add('show');
+        return;
+      }
+      loadCard(true);
+    }, 350);
+  }
+
+  function restart() {
+    current = 0;
+    shuffled.sort(() => Math.random() - 0.5);
+    document.getElementById('complete').classList.remove('show');
+    document.getElementById('quiz-area').classList.remove('hidden');
+    document.getElementById('progress').style.display = '';
+    document.getElementById('q-counter').style.display = '';
+    buildProgress();
+    loadCard();
+  }
+
+  buildProgress();
+  loadCard();
+</script>
+</body>
+</html>
+  .dot.done {
+    background: var(--green);
+    border-color: #2E7D32;
+  }
+
+  /* question counter */
+  .q-counter {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #8B6A50;
+    letter-spacing: 0.08em;
+    font-family: 'Kosugi Maru', sans-serif;
+  }
+
+  /* CARD */
+  .card-wrap {
+    width: 100%;
+    perspective: 1000px;
+  }
+  .card {
+    width: 100%;
+    aspect-ratio: 3/2;
+    position: relative;
+    transform-style: preserve-3d;
     transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
     border-radius: 24px;
